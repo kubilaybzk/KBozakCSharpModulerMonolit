@@ -1,0 +1,23 @@
+{
+  "skill_name": "backend-feature",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Bir modüler monolith projemiz var. Notification modülüne 'GetNotificationById' adında yeni bir query feature eklemem gerekiyor. Handler, endpoint ve validator nasıl olmalı? Kod yaz.",
+      "expected_output": "GetNotificationByIdHandler.cs (IQuery, internal handler, validator, AsNoTracking) ve GetNotificationByIdEndpoint.cs (Carter ICarterModule, thin, ISender.Send) dosyaları",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Inventory modülüne 'UpdateStock' adında bir command feature ekliyorum. Stok miktarını güncelleyecek. Command, validator ve handler'ı tek dosyada, endpoint'i ayrı dosyada yaz.",
+      "expected_output": "UpdateStockHandler.cs (ICommand, validator, internal handler) ve UpdateStockEndpoint.cs (Carter, Results.Ok/NoContent)",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Shipping modülünde 'ListPendingShipments' query'si olacak. Sayfalama yok, sadece tüm bekleyen gönderileri listelesin. Vertical slice pattern'e uygun yaz.",
+      "expected_output": "ListPendingShipmentsHandler.cs (IQuery, AsNoTracking, internal) ve ListPendingShipmentsEndpoint.cs (Carter, MapGet)",
+      "files": []
+    }
+  ]
+}
