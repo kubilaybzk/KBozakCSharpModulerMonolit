@@ -82,6 +82,8 @@ internal class [Feature]Handler([Module]DbContext db)
 {
     public async Task<[Feature]Result> Handle([Feature]Command cmd, CancellationToken ct)
     {
+        // Aggregate factory — domain event burada raise edilir (AddDomainEvent)
+        // Aggregate yapısı için → ddd-patterns skill
         var entity = [Entity].Create(cmd.[field]);
         db.[Entities].Add(entity);
         await db.SaveChangesAsync(ct);
