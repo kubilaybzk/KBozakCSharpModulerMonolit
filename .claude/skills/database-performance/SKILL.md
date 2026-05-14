@@ -1,6 +1,6 @@
 ---
 name: database-performance
-description: Database access patterns for performance. Separate read/write models, avoid N+1 queries, use AsNoTracking, apply row limits, and never do application-side joins. Works with EF Core and Dapper.
+description: Database access patterns for performance. Avoid N+1 queries, use AsNoTracking, apply row limits, project only needed columns, and never do application-side joins. Works with EF Core handlers in VSA pattern.
 invocable: false
 tags: [cqrs, performance, patterns]
 ---
@@ -10,53 +10,19 @@ tags: [cqrs, performance, patterns]
 ## When to Use This Skill
 
 Use this skill when:
-- Designing data access layers
-- Optimizing slow database queries
-- Choosing between EF Core and Dapper
-- Avoiding common performance pitfalls
+- Optimizing slow database queries in handlers
+- Avoiding common EF Core performance pitfalls
+- Reviewing query patterns in read handlers
 
 ---
 
 ## Core Principles
 
-1. **Separate read and write models** - Don't use the same types for both
-2. **Think in batches** - Avoid N+1 queries
-3. **Only retrieve what you need** - No SELECT *
-4. **Apply row limits** - Always have a configurable Take/Limit
-5. **Do joins in SQL** - Never in application code
-6. **AsNoTracking for reads** - EF Core change tracking is expensive
-
----
-
-## Read/Write Model Separation (CQRS Pattern)
-
-Read and write models are fundamentally different — they have different shapes, columns, and purposes. Don't create a single entity and reuse it everywhere.
-
-- **Read models** are denormalized, optimized for query efficiency, return multiple projection types
-- **Write models** are normalized, validation-focused, accept strongly-typed commands
-
-### Read Store Interface
-
-```csharp
-public interface IOrderReadStore
-{
-    Task<OrderDetail?> GetByIdAsync(OrderId id, CancellationToken ct = default);
-    Task<IReadOnlyList<OrderSummary>> GetByCustomerAsync(CustomerId id, int limit, OrderId? cursor = null, CancellationToken ct = default);
-    Task<bool> ExistsAsync(OrderId id, CancellationToken ct = default);
-}
-```
-
-### Write Store Interface
-
-```csharp
-public interface IOrderWriteStore
-{
-    // Returns only the created ID - caller doesn't need the full entity
-    Task<OrderId> CreateAsync(CreateOrderCommand command, CancellationToken ct = default);
-    Task UpdateAsync(OrderId id, UpdateOrderCommand command, CancellationToken ct = default);
-    Task DeleteAsync(OrderId id, CancellationToken ct = default);
-}
-```
+1. **Think in batches** - Avoid N+1 queries
+2. **Only retrieve what you need** - No SELECT *, use projection
+3. **Apply row limits** - Always have a configurable Take/Limit
+4. **Do joins in SQL** - Never in application code
+5. **AsNoTracking for reads** - EF Core change tracking is expensive
 
 ---
 
@@ -188,43 +154,6 @@ var result = await _context.Customers
     .Include(c => c.Orders)
     .ToListAsync();
 ```
-
----
-
-## Don't Build Generic Repositories
-
-Generic repositories hide query complexity and make optimization difficult.
-
-```csharp
-// ❌ BAD: Generic repository
-public interface IRepository<T>
-{
-    Task<IEnumerable<T>> GetAllAsync();  // No limit!
-    Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate); // Can't optimize
-}
-
-// ✅ GOOD: Purpose-built read stores
-public interface IOrderReadStore
-{
-    Task<OrderDetail?> GetByIdAsync(OrderId id, CancellationToken ct = default);
-    Task<IReadOnlyList<OrderSummary>> GetByCustomerAsync(CustomerId id, int limit, CancellationToken ct = default);
-    Task<IReadOnlyList<OrderSummary>> GetPendingAsync(int limit, CancellationToken ct = default);
-}
-```
-
----
-
-## When to Use EF Core vs Dapper
-
-| Scenario | Recommendation |
-|----------|---------------|
-| Simple CRUD | EF Core |
-| Complex read queries | Dapper |
-| Writes with validation | EF Core |
-| Bulk operations | Dapper or raw SQL |
-| Reporting/analytics | Dapper |
-
-You can use both in the same project — EF Core for writes, Dapper for reads.
 
 ---
 

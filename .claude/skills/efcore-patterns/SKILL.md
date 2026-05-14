@@ -85,31 +85,28 @@ await dbContext.SaveChangesAsync();
 
 ---
 
-## Pattern 2: Never Edit Migrations Manually
+## Pattern 2: Migration Yönetimi
 
-**CRITICAL:** Always use EF Core CLI commands to manage migrations. Never manually edit migration files (except for custom SQL in `Up()`/`Down()`), delete, rename, or copy migration files.
+Migration CLI komutları ve proje-specific argümanlar için `ef-migration` skill'ine bak.
 
-```bash
-# Create a new migration
-dotnet ef migrations add AddCustomerTable \
-    --project src/MyApp.Infrastructure \
-    --startup-project src/MyApp.Api
-
-# Remove the last migration (if not yet applied)
-dotnet ef migrations remove \
-    --project src/MyApp.Infrastructure \
-    --startup-project src/MyApp.Api
-
-# Generate idempotent SQL script
-dotnet ef migrations script \
-    --idempotent \
-    --project src/MyApp.Infrastructure \
-    --startup-project src/MyApp.Api
-```
+Temel kural: migration dosyalarını asla manuel düzenleme (custom SQL için `Up()`/`Down()` hariç), silme veya yeniden adlandırma.
 
 ---
 
-## Pattern 3: ExecutionStrategy for Transient Failures
+## Pattern 3: Startup Migration
+
+Proje `UseMigration<TContext>()` helper'ı kullanır — her modülün `Use[Module]Module()` içinde çağrılır:
+
+```csharp
+// Use[Module]Module içinde:
+app.UseMigration<CatalogDbContext>();
+```
+
+Bu pattern projeye özel — ayrı bir BackgroundService veya Aspire migration projesi oluşturma.
+
+---
+
+## Pattern 4: ExecutionStrategy for Transient Failures
 
 Always use `CreateExecutionStrategy()` for operations that might fail transiently:
 
@@ -155,7 +152,7 @@ await strategy.ExecuteAsync(async () =>
 
 ---
 
-## Pattern 4: Bulk Operations with ExecuteUpdate/ExecuteDelete
+## Pattern 5: Bulk Operations with ExecuteUpdate/ExecuteDelete
 
 For bulk operations, use EF Core 7+ `ExecuteUpdateAsync` and `ExecuteDeleteAsync`:
 
@@ -177,7 +174,7 @@ await _db.Orders
 
 ---
 
-## Pattern 5: Query Splitting to Prevent Cartesian Explosion
+## Pattern 6: Query Splitting to Prevent Cartesian Explosion
 
 When you load multiple navigation collections via `Include()`, EF Core generates a single query that can cause cartesian explosion. If you have 10 orders with 10 items each, you get 100 rows instead of 10 + 10.
 

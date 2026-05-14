@@ -36,9 +36,9 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 ```csharp
 // GOOD: Clean, composable Program.cs
 builder.Services
-    .AddCatalogModule(builder.Configuration)
-    .AddBasketModule(builder.Configuration)
-    .AddOrderingModule(builder.Configuration);
+    .Add[ModuleA]Module(builder.Configuration)
+    .Add[ModuleB]Module(builder.Configuration)
+    .Add[ModuleC]Module(builder.Configuration);
 ```
 
 ---
@@ -46,30 +46,33 @@ builder.Services
 ## Extension Method Pattern
 
 ```csharp
-namespace MyApp.Catalog;
+namespace MyApp.[Module];
 
-public static class CatalogServiceCollectionExtensions
+public static class [Module]ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCatalogModule(
+    public static IServiceCollection Add[Module]Module(
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddOptions<CatalogSettings>()
-            .BindConfiguration(CatalogSettings.SectionName)
+        services.AddOptions<[Module]Settings>()
+            .BindConfiguration([Module]Settings.SectionName)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddDbContext<CatalogDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("catalog")));
+        services.AddDbContext<[Module]DbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("[module]")));
 
-        services.AddScoped<ICatalogRepository, CatalogRepository>();
+        services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+        services.AddCarter();
 
         return services;
     }
 }
 ```
 
-**Convention:** `Add{Module}Module` for modules, `Add{Feature}Services` for feature groups.
+**Convention:** `Add[Module]Module` for modules, `Use[Module]Module` for middleware/migrations.
 
 ---
 
@@ -81,10 +84,10 @@ Place extension methods near the services they register:
 src/
   Bootstrapper/Api/
     Program.cs                    # Composes all Add* methods
-  Modules/Catalog/
-    CatalogModule.cs              # AddCatalogModule() extension
-  Modules/Basket/
-    BasketModule.cs               # AddBasketModule() extension
+  Modules/[ModuleA]/
+    [ModuleA]Module.cs            # Add[ModuleA]Module() extension
+  Modules/[ModuleB]/
+    [ModuleB]Module.cs            # Add[ModuleB]Module() extension
 ```
 
 ---
@@ -95,11 +98,11 @@ The `Add*` pattern lets you reuse production configuration in tests and only ove
 
 ```csharp
 // Integration test: reuse production registration, swap DB
-public class CatalogModuleTests : IClassFixture<WebApplicationFactory<Program>>
+public class [Module]Tests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _factory;
 
-    public CatalogModuleTests(WebApplicationFactory<Program> factory)
+    public [Module]Tests(WebApplicationFactory<Program> factory)
     {
         _factory = factory.WithWebHostBuilder(builder =>
         {
