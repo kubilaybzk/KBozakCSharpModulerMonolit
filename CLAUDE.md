@@ -31,6 +31,11 @@ Read this file first. Keep it in memory; open deeper `.claude/*` files only when
 | Kod inceleme / PR review | `code-review` |
 | Refactor / isimlendirme düzeltme | `refactor` |
 | Bilinen drift düzeltme | `drift-fix` |
+| EF Core query/tracking/migration patterns | `efcore-patterns` |
+| DB performans, N+1, row limit, projeksiyon | `database-performance` |
+| Integration test, PostgreSQL/Redis/RabbitMQ container | `testcontainers-integration-tests` |
+| Typed settings, IValidateOptions, startup validation | `microsoft-extensions-configuration` |
+| DI extension methods, captive dependency, scope | `dependency-injection-patterns` |
 
 ## Known Drift To Avoid Copying
 
