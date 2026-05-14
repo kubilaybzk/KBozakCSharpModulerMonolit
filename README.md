@@ -199,6 +199,32 @@ Real PostgreSQL, Redis, and RabbitMQ containers via TestContainers. xUnit `IAsyn
 
 ---
 
+### redis-patterns
+
+**When:** Adding Redis caching to a module, implementing cache decorator, debugging Redis connection or staleness issues.
+
+Cache-aside via Scrutor repository decorator (handler stays clean), `IConnectionMultiplexer` as Singleton, key naming `[module]:[entity]:[id]`, explicit TTL strategy, distributed lock (SemaphoreSlim), fail-open pattern.
+
+```
+"Add Redis cache to BasketRepository"
+→ Scrutor decorator template + key naming + TTL + invalidation on write
+```
+
+---
+
+### ddd-patterns
+
+**When:** Creating aggregates, domain events, value objects, or event handlers in any module.
+
+`Aggregate<TId>` / `Entity<TId>` / `IDomainEvent` base types, factory method pattern (`Create(...)`), `AddDomainEvent()` inside aggregates, value objects as `record` with `Of()` factory and `protected` constructor, `DispatchDomainEventsInterceptor` automatic dispatch via MediatR.
+
+```
+"Add OrderStatusChangedEvent when order ships"
+→ Domain event record + EventHandler + AddDomainEvent() inside aggregate method
+```
+
+---
+
 ## Claude Code Agents
 
 Agents run as isolated sub-agents — zero cost to the main conversation context.
@@ -225,4 +251,17 @@ BenchmarkDotNet result interpretation, JetBrains dotTrace/dotMemory analysis, cl
 ```
 "Why is my handler allocating 2KB per request?"
 → Closure allocation analysis + delegate caching fix
+```
+
+---
+
+### dotnet-concurrency-specialist
+
+**When:** Diagnosing race conditions, deadlocks, or async/await issues in handlers or background services.
+
+Task/async patterns, `SemaphoreSlim` / `ReaderWriterLock` usage, TOCTOU race analysis, check-then-act bugs, sync-over-async deadlocks, non-deterministic test failures.
+
+```
+"This integration test fails intermittently"
+→ Race condition analysis + synchronization primitive recommendation
 ```

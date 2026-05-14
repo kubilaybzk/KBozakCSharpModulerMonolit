@@ -36,6 +36,8 @@ Read this file first. Keep it in memory; open deeper `.claude/*` files only when
 | Integration test, PostgreSQL/Redis/RabbitMQ container | `testcontainers-integration-tests` |
 | Typed settings, IValidateOptions, startup validation | `microsoft-extensions-configuration` |
 | DI extension methods, captive dependency, scope | `dependency-injection-patterns` |
+| Redis cache, Scrutor decorator, TTL, fail-open | `redis-patterns` |
+| Aggregate, Entity, domain event, value object, DDD | `ddd-patterns` |
 
 ## Known Drift To Avoid Copying
 
