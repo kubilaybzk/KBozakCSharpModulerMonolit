@@ -131,3 +131,98 @@ Contains full fix code for 5 drift types: status code inconsistency, blanket cat
 "Fix the catch block in CheckoutBasket handler"
 → Risk analysis + behavior change warning + fix code
 ```
+
+---
+
+### efcore-patterns
+
+**When:** Setting up EF Core, optimizing query performance, debugging change tracking issues.
+
+Covers NoTracking by default, query splitting (`AsSplitQuery`) to prevent cartesian explosion, ExecutionStrategy for transient failures, and bulk `ExecuteUpdate`/`ExecuteDelete` patterns.
+
+```
+"Order.Items Include causes too many rows"
+→ AsSplitQuery configuration + per-query override
+```
+
+---
+
+### database-performance
+
+**When:** Optimizing slow queries in handlers, reviewing EF Core access patterns.
+
+N+1 prevention, row limit enforcement (`Take()`), `AsNoTracking` for read paths, explicit projection instead of loading full entities, application-side join prohibition.
+
+```
+"GetProducts handler is slow"
+→ N+1 check + projection + pagination pattern
+```
+
+---
+
+### testcontainers-integration-tests
+
+**When:** Writing integration tests against real infrastructure.
+
+Real PostgreSQL, Redis, and RabbitMQ containers via TestContainers. xUnit `IAsyncLifetime` + `CollectionFixture` pattern, Respawn for fast data reset between tests (~50ms vs 10-30s container recreation).
+
+```
+"Write integration test for Basket module"
+→ PostgreSqlContainer + EF Core migration + Respawn setup
+```
+
+---
+
+### microsoft-extensions-configuration
+
+**When:** Binding appsettings to typed classes, validating config at startup.
+
+`IOptions<T>` binding, `IValidateOptions<T>` for cross-property validation, `.ValidateOnStart()` to fail fast. Prevents silent runtime failures from missing or invalid configuration.
+
+```
+"Connection string is null at runtime"
+→ Typed settings class + ValidateOnStart pattern
+```
+
+---
+
+### dependency-injection-patterns
+
+**When:** Organizing DI registrations, debugging lifetime issues.
+
+`Add[Module]Module` extension method composition, captive dependency detection (scoped in singleton), `IServiceScopeFactory` pattern for background services. Directly relevant to Scrutor decorator + Redis cache combination.
+
+```
+"BasketRepository behaves strangely in background worker"
+→ Captive dependency diagnosis + scope pattern fix
+```
+
+---
+
+## Claude Code Agents
+
+Agents run as isolated sub-agents — zero cost to the main conversation context.
+
+### dotnet-benchmark-designer
+
+**When:** Designing performance benchmarks for handlers, pipelines, or infrastructure.
+
+BenchmarkDotNet setup, memory diagnostics, parameterized benchmarks, anti-pattern detection (Debug mode measurement, insufficient warmup, shared state). Generates complete runnable benchmark code.
+
+```
+"Benchmark MediatR pipeline overhead"
+→ Complete BenchmarkDotNet class with MemoryDiagnoser
+```
+
+---
+
+### dotnet-performance-analyst
+
+**When:** Analyzing profiling results, interpreting benchmark output, detecting regressions.
+
+BenchmarkDotNet result interpretation, JetBrains dotTrace/dotMemory analysis, closure allocation detection in hot paths, bottleneck identification (CPU-bound, memory-bound, I/O-bound, lock contention).
+
+```
+"Why is my handler allocating 2KB per request?"
+→ Closure allocation analysis + delegate caching fix
+```
