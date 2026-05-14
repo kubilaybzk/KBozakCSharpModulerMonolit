@@ -1,5 +1,3 @@
-**UDEMY COURSE WITH DISCOUNTED - Step by Step Development of this Repository -> https://www.udemy.com/course/net-backend-bootcamp-modulith-vsa-ddd-cqrs-and-outbox/?couponCode=MARC26**
-
 See the overall picture of **Modular Monoliths (Modulith) architecture on .NET** in real-world **KozakCSharpModularMonolith** project;
 
 ![0modulith](https://github.com/user-attachments/assets/0f1f340e-6cb1-4bfd-aa05-f54109e5b865)
@@ -9,74 +7,10 @@ There is a couple of modules implemented **KozakCSharpModularMonolith** domain o
 ### Check Explanation of this Repository on Medium
 * [.NET Backend Bootcamp: Modular Monoliths, VSA, DDD, CQRS and Outbox](https://mehmetozkaya.medium.com/net-backend-bootcamp-modular-monoliths-vsa-ddd-cqrs-and-outbox-b6332b272209)
 
-
-## Whats Including In This Repository
-We have implemented below **architectural patterns in this repository**.
-* Modular Monoliths (Modulith) Architecture
-* Vertical Slice Architecture (VSA)
-* Domain-Driven Design (DDD)
-* Command Query Responsibility Segregation (CQRS)
-* Outbox Pattern for Reliable Messaging
-
-#### Catalog module which includes; 
-* ASP.NET Core Minimal APIs and latest features of .NET8 and C# 12
-* **Vertical Slice Architecture** implementation with Feature folders and single .cs file includes different classes in one file
-* CQRS implementation using MediatR library
-* CQRS Validation Pipeline Behaviors with MediatR and FluentValidation
-* Use Entity Framework Core Code-First Approach and Migrations on PostgreSQL Database
-* Use Carter for Minimal API endpoint definition
-* Cross-cutting concerns Logging, Global Exception Handling and Health Checks
-
-#### Basket module which includes; 
-* Using Redis as a Distributed Cache over PostgreSQL database
-* Implements Proxy, Decorator and Cache-aside patterns
-* Publish BasketCheckoutEvent to RabbitMQ via MassTransit library
-* Implement Outbox Pattern For Reliable Messaging w/ BasketCheckout Use Case
-
-#### Module Communications; 
-* Sync Communications between Catalog and Basket Modules with In-process Method Calls (Public APIs)
-* Async Communications between Modules w/ RabbitMQ & MassTransit for UpdatePrice Between Catalog-Basket Modules
-
-#### Identity module which includes; 
-* OAuth2 + OpenID Connect Flows with Keycloak
-* Setup Keycloak into Docker-compose file for Identity Provider as a Backing Service
-* JwtBearer token for OpenID Connect with Keycloak Identity
-
-#### Ordering module which includes; 
-* Implementing DDD, CQRS, and Clean Architecture with using Best Practices
-* Implement Outbox Pattern For Reliable Messaging w/ BasketCheckout Use Case
-
-#### Migrate to Microservices; 
-* KozakCSharpModularMonolith Modules to Microservices w/ Stranger Fig Pattern
-
-
-## Run The Project
-You will need the following tools:
-
-* [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)
-* [.Net Core 8 or later](https://dotnet.microsoft.com/download/dotnet-core/8)
-* [Docker Desktop](https://www.docker.com/products/docker-desktop)
-
-### Installing
-Follow these steps to get your development environment set up: (Before Run Start the Docker Desktop)
-1. Clone the repository
-2. Once Docker for Windows is installed, go to the **Settings > Advanced option**, from the Docker icon in the system tray, to configure the minimum amount of memory and CPU like so:
-* **Memory: 4 GB**
-* CPU: 2
-3. At the root directory of solution, select **docker-compose** and **Set a startup project**. **Run docker-compose without debugging on visual studio**.
-  Or you can go to root directory which include **docker-compose.yml** files, run below command:
-```csharp
-docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
-```
-
-4. Wait for docker compose all services. That’s it! (some microservices need extra time to work so please wait if not worked in first shut)
-
-5. Launch **Shopping Web Api -> https://localhost:6060** in postman and send api request to internal modules. You can import postman collection in your local environment.
-
 ## Technology Stack & Libraries
 
-| Katman | Teknoloji | Versiyon |
-|--------|-----------|----------|
+| Layer | Technology | Version |
+|-------|-----------|---------|
 | Framework | ASP.NET Core | 8.0 |
 | Language | C# | 12 |
 | Endpoint definition | [Carter](https://github.com/CarterCommunity/Carter) | 8.1 |
@@ -94,112 +28,106 @@ docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
 
 ### Architecture Patterns
 
-| Pattern | Ne İşe Yarar |
-|---------|--------------|
-| **Modular Monolith** | Her business domain kendi modülü — tek deployable, izole geliştirme |
-| **Vertical Slice Architecture** | Her use-case kendi klasöründe, Handler + Endpoint çifti |
-| **CQRS** | `ICommand` / `IQuery` ile okuma ve yazma yolları ayrılır |
-| **DDD** | Aggregate, Value Object, Domain Event ile iş mantığı domainler |
-| **Outbox Pattern** | DB transaction ve message publish atomik — güvenilir mesajlaşma |
-| **Decorator / Cache-aside** | Repository decorator ile Redis cache katmanı |
+| Pattern | Purpose |
+|---------|---------|
+| **Modular Monolith** | Each business domain in its own module — single deployable, isolated development |
+| **Vertical Slice Architecture** | Each use-case in its own folder, Handler + Endpoint pair |
+| **CQRS** | `ICommand` / `IQuery` separates read and write paths |
+| **DDD** | Business logic modeled via Aggregate, Value Object, Domain Event |
+| **Outbox Pattern** | DB transaction and message publish are atomic — reliable messaging |
+| **Decorator / Cache-aside** | Redis cache layer via repository decorator |
 
 ---
 
 ## Claude Code Skills
 
-Bu repo Claude Code ile aktif olarak çalışmak üzere yapılandırılmıştır. `.claude/skills/` altındaki skill'ler Claude'u projenin mimari kurallarına göre yönlendirir.
+This repo is configured to work actively with Claude Code. The skills under `.claude/skills/` guide Claude according to the project's architectural rules.
 
 ### backend-feature
 
-**Ne zaman:** Bir modüle yeni endpoint / feature eklerken veya mevcut bir feature'ı güncellerken.
+**When:** Adding a new endpoint / feature to a module or updating an existing feature.
 
-Vertical Slice pattern'e uygun `[Feature]Handler.cs` (command/query + validator + handler) ve `[Feature]Endpoint.cs` (Carter routing) çiftini doğru yapıyla oluşturur. Handler'ı `internal` yapar, `AsNoTracking()` hatırlatır, `ICommand` vs `IQuery` ayrımını uygular.
+Generates a `[Feature]Handler.cs` (command/query + validator + handler) and `[Feature]Endpoint.cs` (Carter routing) pair conforming to the Vertical Slice pattern. Makes the handler `internal`, reminds `AsNoTracking()`, applies `ICommand` vs `IQuery` distinction.
 
 ```
-"Notification modülüne GetNotificationById endpoint'i ekle"
-→ Handler.cs + Endpoint.cs şablonunu uygular
+"Add GetNotificationById endpoint to Notification module"
+→ Applies Handler.cs + Endpoint.cs template
 ```
 
 ---
 
 ### new-module
 
-**Ne zaman:** Yeni bir business domain (modül) eklenirken.
+**When:** Adding a new business domain (module).
 
-Implementation projesi + Contracts projesi klasör yapısını, DbContext'i (izole schema), DI registration'ı (`Add[Module]Module` / `Use[Module]Module`) ve Program.cs entegrasyonunu adım adım üretir.
+Generates step-by-step: Implementation project + Contracts project folder structure, DbContext (isolated schema), DI registration (`Add[Module]Module` / `Use[Module]Module`) and Program.cs integration.
 
 ```
-"Payment adında yeni bir modül ekleyeyim"
-→ Tam proje scaffold + ilk migration komutu
+"I want to add a new module called Payment"
+→ Full project scaffold + first migration command
 ```
 
 ---
 
 ### ef-migration
 
-**Ne zaman:** Entity veya property değişikliği olduğunda, seed data eklenirken.
+**When:** When there's an entity or property change, or when adding seed data.
 
-Modül bazında migration oluşturma komutlarını, schema sahipliği kurallarını, iyi migration isimlendirmesini ve idempotent seed pattern'ini gösterir. Her modülün migration'ının kendi projesinde yaşadığını uygular.
+Shows per-module migration generation commands, schema ownership rules, good migration naming, and idempotent seed pattern. Enforces that each module's migrations live in their own project.
 
 ```
-"Product'a Category kolonu ekledim, migration lazım"
-→ Doğru --project ve --context argümanlarıyla dotnet ef komutu
+"I added a Category column to Product, need migration"
+→ dotnet ef command with correct --project and --context arguments
 ```
 
 ---
 
 ### integration-design
 
-**Ne zaman:** Bir modülün başka bir modülle konuşması gerektiğinde.
+**When:** When a module needs to communicate with another module.
 
-Sync (Contract + IQuery) vs async (Integration Event + Consumer + Command) kararını verir. Event payload completeness kontrolü, outbox gerekliliği testi ve consumer delegation pattern'ini uygular.
+Decides between Sync (Contract + IQuery) vs Async (Integration Event + Consumer + Command). Applies event payload completeness check, outbox necessity test, and consumer delegation pattern.
 
 ```
-"Basket checkout olunca Ordering yeni sipariş oluştursun"
-→ Async: BasketCheckoutEvent + Consumer + CreateOrderCommand şablonu
+"When basket checkout happens, Ordering should create a new order"
+→ Async: BasketCheckoutEvent + Consumer + CreateOrderCommand template
 ```
 
 ---
 
 ### code-review
 
-**Ne zaman:** Kod incelemesi, PR review veya mimari denetim yapılırken.
+**When:** Code review, PR review, or architectural audit.
 
-P0 (runtime) → P1 (mimari) → P2 (convention) öncelik sırasıyla bulguları listeler. Status code tutarsızlığı, blanket catch, cross-module referans, DbContext endpoint'te gibi hotspot'ları kontrol eder.
+Lists findings in P0 (runtime) → P1 (architectural) → P2 (convention) priority order. Checks hotspots like status code inconsistency, blanket catch, cross-module reference, DbContext in endpoint.
 
 ```
-"Bu PR'ı review et, sorun var mı?"
-→ Seviyeli bulgular: [P0-RUNTIME], [P1-ARCH], [P2-CONV]
+"Review this PR, are there any issues?"
+→ Leveled findings: [P0-RUNTIME], [P1-ARCH], [P2-CONV]
 ```
 
 ---
 
 ### refactor
 
-**Ne zaman:** Davranış değiştirmeden kod temizlenirken, isimlendirme düzeltilirken.
+**When:** Cleaning up code without changing behavior, fixing naming.
 
-Başlamadan önce 4 güvenlik sorusu sorar. Güvenli alanları (naming, metadata) ve riskli alanları (EF mapping, auth, event payload) ayırt eder. Naming quick reference tablosu içerir.
+Asks 4 safety questions before starting. Distinguishes safe areas (naming, metadata) from risky areas (EF mapping, auth, event payload). Includes naming quick reference table.
 
 ```
-"CheckoutBasketEndpoints class ismini düzelt"
-→ Güvenli: CheckoutBasketEndpoints → CheckoutBasketEndpoint
+"Fix CheckoutBasketEndpoints class name"
+→ Safe: CheckoutBasketEndpoints → CheckoutBasketEndpoint
 ```
 
 ---
 
 ### drift-fix
 
-**Ne zaman:** Projede biriken mimari tutarsızlıklar düzeltilirken.
+**When:** Fixing accumulated architectural inconsistencies in the project.
 
-5 drift tipi için tam fix kodu içerir: status code tutarsızlığı, blanket catch, hardcoded consumer data, route büyük harf, naming typo. Her fix için risk seviyesi ve davranış değişikliği uyarısı verir.
+Contains full fix code for 5 drift types: status code inconsistency, blanket catch, hardcoded consumer data, route uppercase, naming typo. Gives risk level and behavior change warning for each fix.
 
 ```
-"CheckoutBasket handler'daki catch bloğunu düzelt"
-→ Risk analizi + davranış değişikliği uyarısı + fix kodu
+"Fix the catch block in CheckoutBasket handler"
+→ Risk analysis + behavior change warning + fix code
 ```
-
----
-
-## Authors
-* **Mehmet Ozkaya** - *Initial work* - [mehmetozkaya](https://github.com/mehmetozkaya)
-# KBozakCSharpModulerMonolit
