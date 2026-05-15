@@ -1,20 +1,20 @@
-version: '3.4'
+name: kbozak
 
 services:
   eshopdb:
-    image: postgres
+    image: postgres:17
 
   distributedcache:
-    image: redis
+    image: redis:8
 
   seq:
     image: datalust/seq:latest
 
   messagebus:
-    image: rabbitmq:management
+    image: rabbitmq:4-management
 
   identity:
-    image: quay.io/keycloak/keycloak:24.0.3
+    image: quay.io/keycloak/keycloak:26.0
 
   api:
     image: ${DOCKER_REGISTRY-}api
@@ -23,4 +23,4 @@ services:
       dockerfile: Bootstrapper/Api/Dockerfile
 
 volumes:
-  postgres_eshopdb:
+  postgres_kbozak:

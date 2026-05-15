@@ -9,3 +9,4 @@ global using FluentValidation;
 global using Shared.Behaviors;
 global using Shared.Messaging.Extensions;
 global using Keycloak.AuthServices.Authentication;
+global using Scalar.AspNetCore;
